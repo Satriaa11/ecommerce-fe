@@ -1,8 +1,8 @@
 "use client";
 
-import { ShoppingCart, Eye, Heart } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
+import Image from "next/image";
+import { ShoppingCart, Eye, Heart } from "lucide-react";
 import { Product } from "@/types";
 
 interface ProductCardProps {

@@ -9,6 +9,7 @@ import { SearchBar } from "./SearchBar";
 import { ProductCard } from "./ProductCard";
 import { Loader2, AlertCircle, Package } from "lucide-react";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import { useAppStore } from "@/stores/useAppStore";
 
 interface SearchFilters {
   query: string;
@@ -22,7 +23,6 @@ interface ProductListProps {
   categoryId?: number;
   initialProducts?: Product[];
   categories?: { id: number; name: string }[];
-  onAddToCart?: (productId: number) => void;
   onShowDetails?: (productId: number) => void;
   onToggleWishlist?: (productId: number) => void;
 }
@@ -31,11 +31,12 @@ export const ProductList = ({
   categoryId,
   initialProducts = [],
   categories = [],
-  onAddToCart,
   onShowDetails,
   onToggleWishlist,
 }: ProductListProps) => {
   const router = useRouter();
+  const { addToCart } = useAppStore();
+
   const [currentFilters, setCurrentFilters] = useState<SearchFilters>({
     query: "",
     minPrice: null,
@@ -71,15 +72,15 @@ export const ProductList = ({
     mutate,
   } = useSWR<Product[]>(swrKey, fetcher, {
     // Konfigurasi SWR
-    revalidateOnFocus: false, // Tidak revalidate saat window focus
-    revalidateOnReconnect: true, // Revalidate saat reconnect
-    dedupingInterval: 60000, // Dedupe requests dalam 1 menit
-    errorRetryCount: 3, // Retry 3 kali jika error
-    errorRetryInterval: 1000, // Interval retry 1 detik
-    fallbackData: initialProducts.length > 0 ? initialProducts : [], // Fallback data
+    revalidateOnFocus: false,
+    revalidateOnReconnect: true,
+    dedupingInterval: 60000,
+    errorRetryCount: 3,
+    errorRetryInterval: 1000,
+    fallbackData: initialProducts.length > 0 ? initialProducts : [],
   });
 
-  // Memoize filtered products untuk menghindari re-calculation yang tidak perlu
+  // Memoize filtered products
   const filteredProducts = useMemo(() => {
     if (!products || products.length === 0) return [];
 
@@ -147,22 +148,53 @@ export const ProductList = ({
     setCurrentFilters(filters);
   }, []);
 
-  // Handle product actions
+  // Handle add to cart - PERBAIKAN: Sesuaikan dengan signature ProductCard
   const handleAddToCart = useCallback(
     (productId: number) => {
-      onAddToCart?.(productId);
-      console.log(`Added product ${productId} to cart`);
+      try {
+        // Cari produk berdasarkan ID
+        const product = products.find((p) => p.id === productId);
+
+        if (!product) {
+          console.error("Product not found:", productId);
+          // toast.error("Produk tidak ditemukan");
+          return;
+        }
+
+        // Validasi stok
+        if (product.quantity !== undefined && product.quantity <= 0) {
+          console.warn("Product out of stock:", product.title);
+          // toast.warning("Produk sedang habis stok");
+          return;
+        }
+
+        // Tambahkan ke cart dengan format yang sesuai store
+        addToCart({
+          id: product.id,
+          name: product.title,
+          price: product.price,
+          quantity: 1, // Selalu tambah 1 quantity
+          image: product.images?.[0], // Tambahkan gambar jika ada
+        });
+
+        console.log(`Added ${product.title} to cart`);
+
+        // Optional: Tampilkan notifikasi sukses
+        // toast.success(`${product.title} berhasil ditambahkan ke keranjang!`);
+      } catch (error) {
+        console.error("Failed to add product to cart:", error);
+        // toast.error("Gagal menambahkan produk ke keranjang");
+      }
     },
-    [onAddToCart],
+    [addToCart, products],
   );
 
+  // Handle product actions
   const handleShowDetails = useCallback(
     (productId: number) => {
-      // Jika ada custom handler, gunakan itu
       if (onShowDetails) {
         onShowDetails(productId);
       } else {
-        // Default behavior: navigate ke halaman detail produk
         router.push(`/products/${productId}`);
       }
       console.log(`Show details for product ${productId}`);
@@ -274,14 +306,6 @@ export const ProductList = ({
             ))}
           </div>
         )}
-
-        {/* Load More Button (if needed for pagination) */}
-        {/* {filteredProducts.length > 0 &&
-          filteredProducts.length < products.length && (
-            <div className="flex justify-center pt-6">
-              <button className="btn btn-outline">Muat Lebih Banyak</button>
-            </div>
-          )} */}
       </div>
     </MaxWidthWrapper>
   );

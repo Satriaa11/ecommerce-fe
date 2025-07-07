@@ -18,11 +18,14 @@ import {
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Product } from "@/types";
 import { fetchProductById } from "@/utils/api";
+import { useAppStore } from "@/stores/useAppStore";
 
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const productId = params.slug as string;
+
+  const { addToCart } = useAppStore();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -84,13 +87,15 @@ export default function ProductDetailPage() {
 
     setIsAddingToCart(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      addToCart({
+        id: product.id,
+        name: product.title,
+        price: product.price,
+        quantity: quantity,
+        image: product.images?.[0] || "/placeholder-product.jpg",
+        category: product.category.name, // Ambil name dari category object
+      });
 
-      // Here you would typically call your cart API
-      console.log(`Added ${quantity} of product ${product.id} to cart`);
-
-      // Show success message (you can implement toast here)
       alert(`${quantity} item berhasil ditambahkan ke keranjang!`);
     } catch (error) {
       console.error("Failed to add to cart:", error);

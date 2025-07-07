@@ -14,12 +14,13 @@ import { useRouter } from "next/navigation";
 
 interface CartItemData {
   id: number;
-  productId: number;
-  title: string;
+  name: string;
   price: number;
   quantity: number;
-  image: string;
-  category: string;
+  image?: string;
+  category?:
+    | string
+    | { id: number; name: string; slug?: string; image?: string }; // Support both string and object
   maxStock?: number;
 }
 
@@ -315,8 +316,8 @@ export const CartView = ({
           <div className="modal-box">
             <h3 className="font-bold text-lg">Konfirmasi Hapus</h3>
             <p className="py-4">
-              Apakah Anda yakin ingin mengosongkan keranjang? Semua item akan
-              dihapus dan tidak dapat dikembalikan.
+              Apakah Anda yakin ingin mengosongkan keranjang belanja? Semua item
+              akan dihapus.
             </p>
             <div className="modal-action">
               <button
@@ -340,3 +341,6 @@ export const CartView = ({
     </MaxWidthWrapper>
   );
 };
+
+// Export types untuk digunakan di komponen lain
+export type { CartItemData, CartViewProps };

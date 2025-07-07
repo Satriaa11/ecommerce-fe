@@ -1,11 +1,12 @@
 "use client";
 
+import { BackButton } from "@/components/shared/BackButton";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { AuthHeader } from "@/components/features/auth/AuthHeader";
 import { LoginForm } from "@/components/features/auth/LoginForm";
 import { SocialAuth } from "@/components/features/auth/SocialAuth";
-import { AuthHeader } from "@/components/features/auth/AuthHeader";
-import { BackButton } from "@/components/shared/BackButton";
+import { useAppStore } from "@/stores/useAppStore";
 
 interface LoginFormData {
   email: string;
@@ -13,9 +14,8 @@ interface LoginFormData {
 }
 
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const { login, isLoading, error, clearError } = useAppStore();
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,33 +29,13 @@ export default function LoginPage() {
   }, [searchParams]);
 
   const handleLogin = async (formData: LoginFormData) => {
-    setIsLoading(true);
-    setError("");
-
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Store token in localStorage or cookie
-        localStorage.setItem("token", data.token);
-
-        // Redirect to dashboard or home
-        router.push("/dashboard");
-      } else {
-        setError(data.message || "Login gagal");
-      }
-    } catch {
-      setError("Terjadi kesalahan. Silakan coba lagi.");
-    } finally {
-      setIsLoading(false);
+      await login(formData);
+      // Redirect to home page after successful login
+      router.push("/");
+    } catch (error) {
+      // Error is already handled in the store
+      console.error("Login failed:", error);
     }
   };
 
@@ -80,9 +60,9 @@ export default function LoginPage() {
               <LoginForm
                 onSubmit={handleLogin}
                 isLoading={isLoading}
-                error={error}
+                error={error || ""}
                 successMessage={successMessage}
-                onErrorClear={() => setError("")}
+                onErrorClear={clearError}
               />
 
               {/* Social Login */}

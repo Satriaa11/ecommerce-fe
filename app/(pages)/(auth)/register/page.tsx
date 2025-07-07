@@ -6,11 +6,11 @@ import { ArrowLeft } from "lucide-react";
 import { RegisterForm } from "@/components/features/auth/RegisterForm";
 import { SocialAuth } from "@/components/features/auth/SocialAuth";
 import { AuthHeader } from "@/components/features/auth/AuthHeader";
+import { createUser } from "@/utils/api";
 
 interface RegisterData {
   name: string;
   email: string;
-  phone: string;
   password: string;
 }
 
@@ -24,23 +24,29 @@ export default function RegisterPage() {
     setError("");
 
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      // Prepare data untuk API escuelajs
+      const createUserData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        avatar: "https://picsum.photos/800", // Default avatar
+      };
 
-      const data = await response.json();
+      await createUser(createUserData);
 
-      if (response.ok) {
-        router.push("/login?message=Registrasi berhasil! Silakan login.");
-      } else {
-        setError(data.message || "Registrasi gagal");
-      }
-    } catch {
-      setError("Terjadi kesalahan. Silakan coba lagi.");
+      // Redirect ke login dengan success message
+      router.push(
+        "/login?message=Registrasi berhasil! Silakan login dengan akun baru Anda.",
+      );
+    } catch (error) {
+      console.error("Registration error:", error);
+
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan saat registrasi. Silakan coba lagi.";
+
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

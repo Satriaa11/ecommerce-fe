@@ -15,7 +15,12 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
-      // Tambahkan domain lain jika diperlukan
+      {
+        protocol: "https",
+        hostname: "img.daisyui.com",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
 };

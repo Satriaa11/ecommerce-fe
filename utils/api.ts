@@ -50,6 +50,14 @@ interface ProductFilters {
   limit?: number;
 }
 
+// Interface untuk create user request
+interface CreateUserRequest {
+  name: string;
+  email: string;
+  password: string;
+  avatar: string;
+}
+
 // Build query string dari filter parameters
 const buildQueryString = (filters: ProductFilters): string => {
   const params = new URLSearchParams();
@@ -288,6 +296,49 @@ export const postSignUp = async (userData: SignUpData): Promise<SignUpData> => {
     return data;
   } catch (error) {
     console.error("Error during sign up:", error);
+    throw error;
+  }
+};
+
+// Create user function untuk registrasi
+export const createUser = async (
+  userData: CreateUserRequest,
+): Promise<unknown> => {
+  try {
+    const response = await fetch("https://api.escuelajs.co/api/v1/users/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+
+      // Handle specific error messages
+      if (response.status === 400) {
+        if (errorData.message && Array.isArray(errorData.message)) {
+          // Handle validation errors
+          const errorMessages = errorData.message.join(", ");
+          throw new Error(errorMessages);
+        } else if (errorData.message) {
+          throw new Error(errorData.message);
+        } else {
+          throw new Error("Data yang dimasukkan tidak valid");
+        }
+      } else if (response.status === 409) {
+        throw new Error("Email sudah terdaftar. Silakan gunakan email lain.");
+      } else {
+        throw new Error(`Registrasi gagal: ${response.status}`);
+      }
+    }
+
+    const data = await response.json();
+    console.log("User created successfully:", data);
+    return data;
+  } catch (error) {
+    console.error("Error creating user:", error);
     throw error;
   }
 };

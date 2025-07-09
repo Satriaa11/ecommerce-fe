@@ -14,6 +14,7 @@ import {
   AlertCircle,
   Lock,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const AccountSettings = () => {
   const { user, updatePassword } = useAppStore();
@@ -271,6 +272,23 @@ export const AccountSettings = () => {
               <li>• Mengandung huruf kecil (a-z)</li>
               <li>• Mengandung angka (0-9)</li>
             </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Theme Settings */}
+      <div className="card bg-base-100 shadow-lg">
+        <div className="card-body">
+          <h2 className="card-title mb-4">Pengaturan Tema</h2>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-medium">Mode Gelap</h3>
+              <p className="text-sm text-base-content/70">
+                Ubah tampilan aplikasi ke mode gelap atau terang
+              </p>
+            </div>
+            <ThemeToggle />
           </div>
         </div>
       </div>

@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { ZodError, ZodSchema } from "zod";
+import { ZodError, ZodObject, ZodRawShape } from "zod";
 
-interface UseFormValidationProps<T> {
-  schema: ZodSchema<T>;
+interface UseFormValidationProps<T extends ZodRawShape> {
+  schema: ZodObject<T>;
   initialData: T;
   onSubmit: (data: T) => Promise<void>;
 }
 
-export const useFormValidation = <T extends Record<string, any>>({
+export const useFormValidation = <T extends ZodRawShape>({
   schema,
   initialData,
   onSubmit,
@@ -16,7 +16,7 @@ export const useFormValidation = <T extends Record<string, any>>({
   const [errors, setErrors] = useState<Partial<Record<keyof T, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validateField = (field: keyof T, value: any) => {
+  const validateField = (field: keyof T, value: unknown) => {
     try {
       const fieldSchema = schema.shape[field as string];
       if (fieldSchema) {
@@ -65,7 +65,7 @@ export const useFormValidation = <T extends Record<string, any>>({
     }
   };
 
-  const updateField = (field: keyof T, value: any) => {
+  const updateField = (field: keyof T, value: unknown) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     validateField(field, value);
   };

@@ -47,7 +47,7 @@ export default function ProductDetailPage() {
         const data = await fetchProductById(parseInt(productId));
         setProduct(data);
       } catch (err) {
-        setError("Gagal memuat detail produk. Silakan coba lagi.");
+        setError("Failed to load product details. Please try again.");
         console.error("Error loading product:", err);
       } finally {
         setIsLoading(false);
@@ -59,9 +59,9 @@ export default function ProductDetailPage() {
 
   // Format price
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("id-ID", {
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "IDR",
+      currency: "USD",
       minimumFractionDigits: 0,
     }).format(price);
   };
@@ -93,13 +93,13 @@ export default function ProductDetailPage() {
         price: product.price,
         quantity: quantity,
         image: product.images?.[0] || "/placeholder-product.jpg",
-        category: product.category.name, // Ambil name dari category object
+        category: product.category.name,
       });
 
-      alert(`${quantity} item berhasil ditambahkan ke keranjang!`);
+      alert(`${quantity} item(s) successfully added to cart!`);
     } catch (error) {
       console.error("Failed to add to cart:", error);
-      alert("Gagal menambahkan ke keranjang. Silakan coba lagi.");
+      alert("Failed to add to cart. Please try again.");
     } finally {
       setIsAddingToCart(false);
     }
@@ -108,7 +108,6 @@ export default function ProductDetailPage() {
   // Handle wishlist toggle
   const handleToggleWishlist = () => {
     setIsWishlisted(!isWishlisted);
-    // Here you would typically call your wishlist API
     console.log(`Toggled wishlist for product ${product?.id}`);
   };
 
@@ -131,21 +130,21 @@ export default function ProductDetailPage() {
           <AlertCircle className="h-16 w-16 text-error" />
           <div className="text-center">
             <h2 className="text-2xl font-bold text-base-content mb-2">
-              Produk Tidak Ditemukan
+              Product Not Found
             </h2>
             <p className="text-base-content/70 mb-4">
-              {error || "Produk yang Anda cari tidak tersedia."}
+              {error || "The product you're looking for is not available."}
             </p>
             <div className="flex gap-2">
               <button onClick={() => router.back()} className="btn btn-outline">
                 <ArrowLeft className="h-4 w-4" />
-                Kembali
+                Go Back
               </button>
               <button
                 onClick={() => router.push("/products")}
                 className="btn btn-primary"
               >
-                Lihat Produk Lain
+                View Other Products
               </button>
             </div>
           </div>
@@ -168,7 +167,7 @@ export default function ProductDetailPage() {
                 onClick={() => router.push("/")}
                 className="link link-hover"
               >
-                Beranda
+                Home
               </button>
             </li>
             <li>
@@ -176,7 +175,7 @@ export default function ProductDetailPage() {
                 onClick={() => router.push("/products")}
                 className="link link-hover"
               >
-                Produk
+                Products
               </button>
             </li>
             <li>
@@ -198,7 +197,7 @@ export default function ProductDetailPage() {
         {/* Back Button */}
         <button onClick={() => router.back()} className="btn btn-ghost btn-sm">
           <ArrowLeft className="h-4 w-4" />
-          Kembali
+          Back
         </button>
 
         {/* Product Detail */}
@@ -224,7 +223,6 @@ export default function ProductDetailPage() {
               />
             </div>
 
-            {/* Image Thumbnails */}
             {/* Image Thumbnails */}
             {product.images && product.images.length > 1 && (
               <div className="grid grid-cols-4 gap-2">
@@ -269,7 +267,7 @@ export default function ProductDetailPage() {
               {product.title}
             </h1>
 
-            {/* Rating (placeholder) */}
+            {/* Rating */}
             <div className="flex items-center gap-2">
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
@@ -280,7 +278,7 @@ export default function ProductDetailPage() {
                 ))}
               </div>
               <span className="text-sm text-base-content/70">
-                (4.0) • 128 ulasan
+                (4.0) • 128 reviews
               </span>
             </div>
 
@@ -315,16 +313,16 @@ export default function ProductDetailPage() {
                 }`}
               >
                 {isOutOfStock
-                  ? "Stok Habis"
+                  ? "Out of Stock"
                   : (product.quantity || 0) < 10
-                    ? `Stok Terbatas: ${product.quantity}`
-                    : `Stok: ${product.quantity}`}
+                    ? `Limited Stock: ${product.quantity}`
+                    : `In Stock: ${product.quantity}`}
               </span>
             </div>
 
             {/* Description */}
             <div className="space-y-2">
-              <h3 className="font-semibold">Deskripsi Produk</h3>
+              <h3 className="font-semibold">Product Description</h3>
               <p className="text-base-content/80 leading-relaxed">
                 {product.description}
               </p>
@@ -333,7 +331,7 @@ export default function ProductDetailPage() {
             {/* Quantity Selector */}
             {!isOutOfStock && (
               <div className="space-y-2">
-                <label className="font-semibold">Jumlah</label>
+                <label className="font-semibold">Quantity</label>
                 <div className="flex items-center gap-3">
                   <div className="join">
                     <button
@@ -352,47 +350,12 @@ export default function ProductDetailPage() {
                         const value = parseInt(e.target.value);
                         if (!isNaN(value) && value > 0) {
                           const maxQuantity = product.quantity || 99;
-                          setQuantity(
-                            Math.min(Math.max(value, 1), maxQuantity),
-                          );
+                          setQuantity(Math.min(value, maxQuantity));
                         }
                       }}
-                      onKeyDown={(e) => {
-                        // Allow: backspace, delete, tab, escape, enter, arrow keys
-                        if (
-                          [8, 9, 27, 13, 37, 38, 39, 40, 46].includes(e.keyCode)
-                        ) {
-                          return;
-                        }
-                        // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+Z
-                        if (
-                          e.ctrlKey &&
-                          [65, 67, 86, 88, 90].includes(e.keyCode)
-                        ) {
-                          return;
-                        }
-                        // Only allow numbers (0-9)
-                        if (e.keyCode < 48 || e.keyCode > 57) {
-                          e.preventDefault();
-                        }
-                      }}
-                      onBlur={(e) => {
-                        const value = parseInt(e.target.value);
-                        if (isNaN(value) || value < 1) {
-                          setQuantity(1);
-                        } else {
-                          const maxQuantity = product.quantity || 99;
-                          const validValue = Math.min(value, maxQuantity);
-                          setQuantity(validValue);
-                        }
-                      }}
-                      onFocus={(e) => {
-                        e.target.select(); // Select all text when focused
-                      }}
-                      className="input input-sm join-item w-20 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      className="input input-sm join-item w-16 text-center"
                       min="1"
                       max={product.quantity || 99}
-                      placeholder="1"
                     />
                     <button
                       title="Increase Quantity"
@@ -405,62 +368,81 @@ export default function ProductDetailPage() {
                     </button>
                   </div>
                   <span className="text-sm text-base-content/70">
-                    Maksimal {product.quantity || 99} item
+                    Max: {product.quantity || 99}
                   </span>
                 </div>
               </div>
             )}
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={handleAddToCart}
-                disabled={isOutOfStock || isAddingToCart}
-                className={`btn btn-primary flex-1 ${isAddingToCart ? "loading" : ""}`}
-              >
-                {!isAddingToCart && <ShoppingCart className="h-5 w-5" />}
-                {isAddingToCart ? "Menambahkan..." : "Tambah ke Keranjang"}
-              </button>
+            <div className="space-y-3">
+              <div className="flex gap-3">
+                <button
+                  onClick={handleAddToCart}
+                  disabled={isOutOfStock || isAddingToCart}
+                  className="btn btn-primary flex-1"
+                >
+                  {isAddingToCart ? (
+                    <>
+                      <span className="loading loading-spinner loading-sm"></span>
+                      Adding...
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="h-4 w-4" />
+                      {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={handleToggleWishlist}
+                  className={`btn btn-outline ${
+                    isWishlisted ? "btn-error" : "btn-ghost"
+                  }`}
+                  title={
+                    isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"
+                  }
+                >
+                  <Heart
+                    className={`h-4 w-4 ${isWishlisted ? "fill-current" : ""}`}
+                  />
+                </button>
+              </div>
 
-              <button
-                onClick={handleToggleWishlist}
-                className={`btn btn-outline ${isWishlisted ? "btn-error" : ""}`}
-              >
-                <Heart
-                  className={`h-5 w-5 ${isWishlisted ? "fill-current" : ""}`}
-                />
-                {isWishlisted ? "Hapus dari Wishlist" : "Tambah ke Wishlist"}
-              </button>
+              {/* Buy Now Button */}
+              {!isOutOfStock && (
+                <button className="btn btn-secondary w-full">Buy Now</button>
+              )}
             </div>
 
             {/* Product Features */}
             <div className="space-y-3">
-              <h3 className="font-semibold">Keunggulan Produk</h3>
+              <h3 className="font-semibold">Product Features</h3>
               <div className="grid grid-cols-1 gap-3">
                 <div className="flex items-center gap-3 p-3 bg-base-200 rounded-lg">
                   <Truck className="h-5 w-5 text-primary" />
                   <div>
-                    <div className="font-medium">Gratis Ongkir</div>
+                    <div className="font-medium">Free Shipping</div>
                     <div className="text-sm text-base-content/70">
-                      Untuk pembelian minimal Rp 100.000
+                      On orders over $50
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-base-200 rounded-lg">
                   <Shield className="h-5 w-5 text-primary" />
                   <div>
-                    <div className="font-medium">Garansi Resmi</div>
+                    <div className="font-medium">Warranty</div>
                     <div className="text-sm text-base-content/70">
-                      Garansi resmi 1 tahun
+                      1 year manufacturer warranty
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-base-200 rounded-lg">
                   <RotateCcw className="h-5 w-5 text-primary" />
                   <div>
-                    <div className="font-medium">Mudah Dikembalikan</div>
+                    <div className="font-medium">Easy Returns</div>
                     <div className="text-sm text-base-content/70">
-                      Pengembalian dalam 7 hari
+                      30-day return policy
                     </div>
                   </div>
                 </div>
@@ -470,46 +452,52 @@ export default function ProductDetailPage() {
         </div>
 
         {/* Product Specifications */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold">Spesifikasi Produk</h3>
-          <div className="overflow-x-auto">
-            <table className="table table-zebra w-full">
-              <tbody>
-                <tr>
-                  <td className="font-medium">Kategori</td>
-                  <td>{product.category.name}</td>
-                </tr>
-                <tr>
-                  <td className="font-medium">ID Produk</td>
-                  <td>#{product.id}</td>
-                </tr>
-                <tr>
-                  <td className="font-medium">Stok Tersedia</td>
-                  <td>{product.quantity || 0} unit</td>
-                </tr>
-                <tr>
-                  <td className="font-medium">Berat</td>
-                  <td>1 kg</td>
-                </tr>
-                <tr>
-                  <td className="font-medium">Dimensi</td>
-                  <td>20 x 15 x 10 cm</td>
-                </tr>
-              </tbody>
-            </table>
+        <div className="card bg-base-100 shadow-lg">
+          <div className="card-body">
+            <h2 className="card-title">Product Specifications</h2>
+            <div className="overflow-x-auto">
+              <table className="table table-zebra">
+                <tbody>
+                  <tr>
+                    <td className="font-medium">Category</td>
+                    <td>{product.category.name}</td>
+                  </tr>
+                  <tr>
+                    <td className="font-medium">Product ID</td>
+                    <td>#{product.id}</td>
+                  </tr>
+                  <tr>
+                    <td className="font-medium">Availability</td>
+                    <td>
+                      <span
+                        className={`badge ${
+                          isOutOfStock ? "badge-error" : "badge-success"
+                        }`}
+                      >
+                        {isOutOfStock ? "Out of Stock" : "In Stock"}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="font-medium">Stock Quantity</td>
+                    <td>{product.quantity || 0} units</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        {/* Reviews Section */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold">Ulasan Pelanggan</h3>
+        {/* Customer Reviews Section */}
+        <div className="card bg-base-100 shadow-lg">
+          <div className="card-body">
+            <h2 className="card-title">Customer Reviews</h2>
 
-          {/* Review Summary */}
-          <div className="bg-base-200 p-6 rounded-lg">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="text-3xl font-bold">4.0</div>
-              <div>
-                <div className="flex items-center mb-1">
+            {/* Review Summary */}
+            <div className="flex items-center gap-4 mb-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold">4.0</div>
+                <div className="flex items-center justify-center">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
@@ -517,106 +505,95 @@ export default function ProductDetailPage() {
                     />
                   ))}
                 </div>
-                <div className="text-sm text-base-content/70">
-                  Berdasarkan 128 ulasan
-                </div>
+                <div className="text-sm text-base-content/70">128 reviews</div>
+              </div>
+              <div className="flex-1">
+                {[5, 4, 3, 2, 1].map((rating) => (
+                  <div key={rating} className="flex items-center gap-2 mb-1">
+                    <span className="text-sm w-2">{rating}</span>
+                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                    <div className="flex-1 bg-base-200 rounded-full h-2">
+                      <div
+                        className="bg-yellow-400 h-2 rounded-full"
+                        style={{
+                          width: `${rating === 4 ? 60 : rating === 5 ? 30 : rating === 3 ? 8 : 2}%`,
+                        }}
+                      ></div>
+                    </div>
+                    <span className="text-sm text-base-content/70 w-8">
+                      {rating === 4
+                        ? 77
+                        : rating === 5
+                          ? 38
+                          : rating === 3
+                            ? 10
+                            : 3}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Rating Breakdown */}
-            <div className="space-y-2">
-              {[5, 4, 3, 2, 1].map((rating) => (
-                <div key={rating} className="flex items-center gap-2">
-                  <span className="text-sm w-8">{rating}</span>
-                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                  <div className="flex-1 bg-base-300 rounded-full h-2">
-                    <div
-                      className={`bg-yellow-400 h-2 rounded-full ${
-                        rating === 4
-                          ? "w-[60%]"
-                          : rating === 5
-                            ? "w-[30%]"
-                            : rating === 3
-                              ? "w-[8%]"
-                              : "w-[2%]"
-                      }`}
-                    ></div>
-                  </div>
-                  <span className="text-sm text-base-content/70 w-8">
-                    {rating === 4
-                      ? 77
-                      : rating === 5
-                        ? 38
-                        : rating === 3
-                          ? 10
-                          : 3}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Sample Reviews */}
-          <div className="space-y-4">
-            {[
-              {
-                name: "Ahmad S.",
-                rating: 5,
-                date: "2 hari yang lalu",
-                comment:
-                  "Produk sangat bagus, sesuai dengan deskripsi. Pengiriman cepat dan packaging rapi.",
-              },
-              {
-                name: "Sari M.",
-                rating: 4,
-                date: "1 minggu yang lalu",
-                comment:
-                  "Kualitas produk baik, hanya saja warnanya sedikit berbeda dari foto. Overall puas.",
-              },
-              {
-                name: "Budi T.",
-                rating: 4,
-                date: "2 minggu yang lalu",
-                comment:
-                  "Produk sesuai ekspektasi. Pelayanan seller juga responsif. Recommended!",
-              },
-            ].map((review, index) => (
-              <div
-                key={index}
-                className="border border-base-200 p-4 rounded-lg"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="avatar placeholder">
-                      <div className="bg-neutral text-neutral-content rounded-full w-8">
-                        <span className="text-xs">{review.name.charAt(0)}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="font-medium text-sm">{review.name}</div>
-                      <div className="flex items-center gap-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-3 w-3 ${i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-base-300"}`}
-                          />
-                        ))}
-                      </div>
+            {/* Sample Reviews */}
+            <div className="space-y-4">
+              <div className="border-b border-base-200 pb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="avatar placeholder">
+                    <div className="bg-neutral text-neutral-content rounded-full w-8">
+                      <span className="text-xs">JD</span>
                     </div>
                   </div>
-                  <span className="text-xs text-base-content/50">
-                    {review.date}
-                  </span>
+                  <div>
+                    <div className="font-medium">John Doe</div>
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-3 w-3 ${i < 5 ? "fill-yellow-400 text-yellow-400" : "text-base-300"}`}
+                        />
+                      ))}
+                      <span className="text-sm text-base-content/70 ml-1">
+                        2 days ago
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-sm text-base-content/80">{review.comment}</p>
+                <p className="text-base-content/80">
+                  Excellent product! Great quality and fast shipping. Highly
+                  recommended.
+                </p>
               </div>
-            ))}
-          </div>
 
-          {/* View All Reviews Button */}
-          <div className="text-center">
-            <button className="btn btn-outline">
-              Lihat Semua Ulasan (128)
+              <div className="border-b border-base-200 pb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="avatar placeholder">
+                    <div className="bg-neutral text-neutral-content rounded-full w-8">
+                      <span className="text-xs">AS</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-medium">Alice Smith</div>
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-3 w-3 ${i < 4 ? "fill-yellow-400 text-yellow-400" : "text-base-300"}`}
+                        />
+                      ))}
+                      <span className="text-sm text-base-content/70 ml-1">
+                        1 week ago
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-base-content/80">
+                  Good value for money. The product meets my expectations.
+                </p>
+              </div>
+            </div>
+
+            <button className="btn btn-outline btn-sm mt-4">
+              View All Reviews
             </button>
           </div>
         </div>

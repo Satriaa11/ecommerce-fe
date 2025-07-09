@@ -221,7 +221,7 @@ export const ProductList = ({
       <MaxWidthWrapper>
         <div className="flex flex-col items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-          <p className="text-base-content/70">Memuat produk...</p>
+          <p className="text-base-content/70">Loading...</p>
         </div>
       </MaxWidthWrapper>
     );
@@ -233,9 +233,9 @@ export const ProductList = ({
       <MaxWidthWrapper>
         <div className="alert alert-error">
           <AlertCircle className="h-5 w-5" />
-          <span>Gagal memuat produk. Silakan coba lagi.</span>
+          <span>Failed to load products.</span>
           <button className="btn btn-sm btn-outline" onClick={handleRetry}>
-            Coba Lagi
+            Try Again
           </button>
         </div>
       </MaxWidthWrapper>
@@ -255,10 +255,10 @@ export const ProductList = ({
         {/* Results Summary */}
         <div className="flex items-center justify-between">
           <div className="text-sm text-base-content/70">
-            Menampilkan {filteredProducts.length} dari {products.length} produk
+            Show {filteredProducts.length} of {products.length} products
             {currentFilters.query && (
               <span className="ml-1">
-                untuk &rdquo;{currentFilters.query}&rdquo;
+                for &rdquo;{currentFilters.query}&rdquo;
               </span>
             )}
           </div>
@@ -282,7 +282,7 @@ export const ProductList = ({
           <div className="flex flex-col items-center justify-center py-12">
             <Package className="h-12 w-12 text-base-content/30 mb-4" />
             <h3 className="text-lg font-semibold text-base-content/70 mb-2">
-              Tidak ada produk ditemukan
+              No products available
             </h3>
             <p className="text-base-content/50 text-center max-w-md">
               {currentFilters.query ||

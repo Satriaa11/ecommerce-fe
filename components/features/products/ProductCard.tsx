@@ -39,9 +39,9 @@ export const ProductCard = ({
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("id-ID", {
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "IDR",
+      currency: "USD",
       minimumFractionDigits: 0,
     }).format(price);
   };
@@ -102,7 +102,9 @@ export const ProductCard = ({
                 product.quantity > 0 ? "badge-success" : "badge-error"
               }`}
             >
-              {product.quantity > 0 ? `Stock: ${product.quantity}` : "Habis"}
+              {product.quantity > 0
+                ? `Stock: ${product.quantity}`
+                : "Out of Stock"}
             </span>
           )}
         </div>
@@ -115,7 +117,7 @@ export const ProductCard = ({
             className="btn btn-outline btn-xs w-full"
           >
             <Eye className="h-3 w-3" />
-            <span className="text-xs">Detail</span>
+            <span className="text-xs">Details</span>
           </button>
 
           {/* Add to Cart Button */}
@@ -131,7 +133,7 @@ export const ProductCard = ({
           >
             {!isLoading && <ShoppingCart className="h-3 w-3" />}
             <span className="text-xs">
-              {isLoading ? "Menambah..." : "Tambah"}
+              {isLoading ? "Adding..." : "Add to Cart"}
             </span>
           </button>
         </div>

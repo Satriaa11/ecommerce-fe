@@ -32,6 +32,38 @@ export const SearchBar = ({
 
   const [showFilters, setShowFilters] = useState(false);
   const [tempFilters, setTempFilters] = useState(filters);
+  const [allCategories, setAllCategories] =
+    useState<{ id: number; name: string }[]>(categories);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
+
+  // Fetch categories if no categories from props
+  useEffect(() => {
+    const fetchCategories = async () => {
+      if (categories.length === 0) {
+        setIsLoadingCategories(true);
+        try {
+          const response = await fetch(
+            "https://api.escuelajs.co/api/v1/categories",
+          );
+          const data = await response.json();
+          setAllCategories(data);
+        } catch (error) {
+          console.error("Failed to fetch categories:", error);
+        } finally {
+          setIsLoadingCategories(false);
+        }
+      } else {
+        setAllCategories(categories);
+      }
+    };
+
+    fetchCategories();
+  }, [categories]);
+
+  // Sync tempFilters with filters when filters change
+  useEffect(() => {
+    setTempFilters(filters);
+  }, [filters]);
 
   // Debounce search
   useEffect(() => {
@@ -70,9 +102,9 @@ export const SearchBar = ({
     filters.sortBy !== "name";
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("id-ID", {
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "IDR",
+      currency: "USD",
       minimumFractionDigits: 0,
     }).format(price);
   };
@@ -238,9 +270,14 @@ export const SearchBar = ({
                   }
                   className="select select-bordered select-sm w-full"
                   title="Select a category to filter products"
+                  disabled={isLoadingCategories}
                 >
-                  <option value="">All Categories</option>
-                  {categories.map((category) => (
+                  <option value="">
+                    {isLoadingCategories
+                      ? "Loading categories..."
+                      : "All Categories"}
+                  </option>
+                  {allCategories.map((category) => (
                     <option key={category.id} value={category.name}>
                       {category.name}
                     </option>
@@ -283,54 +320,62 @@ export const SearchBar = ({
                     setTempFilters((prev) => ({
                       ...prev,
                       minPrice: null,
-                      maxPrice: 100000,
+                      maxPrice: 100,
                     }))
                   }
                   className="btn btn-outline btn-xs"
                 >
-                  Under 100K
+                  Under $100
                 </button>
                 <button
                   onClick={() =>
                     setTempFilters((prev) => ({
                       ...prev,
-                      minPrice: 100000,
-                      maxPrice: 500000,
+                      minPrice: 100,
+                      maxPrice: 500,
                     }))
                   }
                   className="btn btn-outline btn-xs"
                 >
-                  100K - 500K
+                  $100 - $500
                 </button>
                 <button
                   onClick={() =>
                     setTempFilters((prev) => ({
                       ...prev,
-                      minPrice: 500000,
+                      minPrice: 500,
                       maxPrice: null,
                     }))
                   }
                   className="btn btn-outline btn-xs"
                 >
-                  Above 500K
+                  Above $500
                 </button>
               </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-2 mt-6">
+            <div className="flex justify-between mt-6 pt-4 border-t border-base-200">
               <button
                 onClick={handleResetFilters}
-                className="btn btn-outline btn-sm flex-1"
+                className="btn btn-ghost btn-sm"
               >
-                Reset
+                Reset All
               </button>
-              <button
-                onClick={handleApplyFilters}
-                className="btn btn-primary btn-sm flex-1"
-              >
-                Apply Filters
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowFilters(false)}
+                  className="btn btn-outline btn-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleApplyFilters}
+                  className="btn btn-primary btn-sm"
+                >
+                  Apply Filters
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -47,15 +47,15 @@ export const RegisterForm = ({
 
   const validateForm = () => {
     if (form.password !== form.confirmPassword) {
-      setFormError("Password dan konfirmasi password tidak cocok");
+      setFormError("Password and confirm password do not match");
       return false;
     }
     if (form.password.length < 6) {
-      setFormError("Password minimal 6 karakter");
+      setFormError("Password must be at least 6 characters");
       return false;
     }
     if (!acceptTerms) {
-      setFormError("Anda harus menyetujui syarat dan ketentuan");
+      setFormError("You must agree to the terms and conditions");
       return false;
     }
     return true;
@@ -87,7 +87,7 @@ export const RegisterForm = ({
       {/* Name Field */}
       <div className="form-control">
         <label className="label">
-          <span className="label-text font-medium">Nama Lengkap</span>
+          <span className="label-text font-medium">Full Name</span>
         </label>
         <div className="relative">
           <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-base-content/50" />
@@ -96,7 +96,7 @@ export const RegisterForm = ({
             name="name"
             value={form.name}
             onChange={handleInputChange}
-            placeholder="Masukkan nama lengkap"
+            placeholder="Enter your full name"
             className="input input-bordered w-full pl-10"
             required
           />
@@ -115,7 +115,7 @@ export const RegisterForm = ({
             name="email"
             value={form.email}
             onChange={handleInputChange}
-            placeholder="Masukkan email"
+            placeholder="Enter your email"
             className="input input-bordered w-full pl-10"
             required
           />
@@ -125,7 +125,7 @@ export const RegisterForm = ({
       {/* Phone Field */}
       <div className="form-control">
         <label className="label">
-          <span className="label-text font-medium">Nomor Telepon</span>
+          <span className="label-text font-medium">Phone Number</span>
         </label>
         <div className="relative">
           <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-base-content/50" />
@@ -134,7 +134,7 @@ export const RegisterForm = ({
             name="phone"
             value={form.phone}
             onChange={handleInputChange}
-            placeholder="Masukkan nomor telepon"
+            placeholder="Enter your phone number"
             className="input input-bordered w-full pl-10"
             required
           />
@@ -153,7 +153,7 @@ export const RegisterForm = ({
             name="password"
             value={form.password}
             onChange={handleInputChange}
-            placeholder="Masukkan password"
+            placeholder="Enter your password"
             className="input input-bordered w-full pl-10 pr-10"
             required
           />
@@ -174,7 +174,7 @@ export const RegisterForm = ({
       {/* Confirm Password Field */}
       <div className="form-control">
         <label className="label">
-          <span className="label-text font-medium">Konfirmasi Password</span>
+          <span className="label-text font-medium">Confirm Password</span>
         </label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-base-content/50" />
@@ -183,7 +183,7 @@ export const RegisterForm = ({
             name="confirmPassword"
             value={form.confirmPassword}
             onChange={handleInputChange}
-            placeholder="Konfirmasi password"
+            placeholder="Confirm your password"
             className="input input-bordered w-full pl-10 pr-10"
             required
           />
@@ -211,13 +211,13 @@ export const RegisterForm = ({
             className="checkbox checkbox-sm"
           />
           <span className="label-text ml-3">
-            Saya menyetujui{" "}
+            I agree to the{" "}
             <Link href="/terms" className="link link-primary">
-              syarat dan ketentuan
+              terms and conditions
             </Link>{" "}
-            serta{" "}
+            and{" "}
             <Link href="/privacy" className="link link-primary">
-              kebijakan privasi
+              privacy policy
             </Link>
           </span>
         </label>
@@ -232,10 +232,10 @@ export const RegisterForm = ({
         {isLoading ? (
           <>
             <span className="loading loading-spinner loading-sm"></span>
-            Mendaftar...
+            Signing up...
           </>
         ) : (
-          "Daftar"
+          "Sign Up"
         )}
       </button>
     </form>

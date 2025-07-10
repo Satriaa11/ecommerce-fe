@@ -25,8 +25,8 @@ export const LoginForm = ({
   onErrorClear,
 }: LoginFormProps) => {
   const [form, setForm] = useState<LoginFormData>({
-    email: "",
-    password: "",
+    email: "maria@mail.com",
+    password: "12345",
   });
   const [showPassword, setShowPassword] = useState(false);
 
@@ -49,6 +49,13 @@ export const LoginForm = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Demo Notice */}
+      <div className="alert alert-info">
+        <span>
+          Demo account: <br /> email: maria@mail.com / password: 12345
+        </span>
+      </div>
+
       {successMessage && (
         <div className="alert alert-success">
           <span>{successMessage}</span>
@@ -73,7 +80,7 @@ export const LoginForm = ({
             name="email"
             value={form.email}
             onChange={handleInputChange}
-            placeholder="Masukkan email Anda"
+            placeholder="Enter your email"
             className="input input-bordered w-full pl-10"
             required
           />
@@ -92,7 +99,7 @@ export const LoginForm = ({
             name="password"
             value={form.password}
             onChange={handleInputChange}
-            placeholder="Masukkan password Anda"
+            placeholder="Enter your password"
             className="input input-bordered w-full pl-10 pr-10"
             required
           />
@@ -100,6 +107,7 @@ export const LoginForm = ({
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-1/2 transform -translate-y-1/2"
+            aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? (
               <EyeOff className="h-5 w-5 text-base-content/50" />
@@ -114,10 +122,10 @@ export const LoginForm = ({
       <div className="flex items-center justify-between">
         <label className="label cursor-pointer">
           <input type="checkbox" className="checkbox checkbox-sm" />
-          <span className="label-text ml-2">Ingat saya</span>
+          <span className="label-text ml-2">Remember me</span>
         </label>
-        <Link href="/forgot-password" className="link link-primary text-sm">
-          Lupa password?
+        <Link href="/login" className="link link-primary text-sm">
+          Forgot password?
         </Link>
       </div>
 
@@ -130,10 +138,10 @@ export const LoginForm = ({
         {isLoading ? (
           <>
             <span className="loading loading-spinner loading-sm"></span>
-            Masuk...
+            Signing in...
           </>
         ) : (
-          "Masuk"
+          "Sign In"
         )}
       </button>
     </form>

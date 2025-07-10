@@ -91,7 +91,7 @@ export const Header = () => {
             className="btn btn-ghost text-xl font-bold"
             onClick={() => router.push("/")}
           >
-            Store
+            ShopEase
           </button>
         </div>
 
@@ -135,13 +135,14 @@ export const Header = () => {
 
           {/* Cart */}
           <button
-            className="btn btn-ghost btn-circle"
-            onClick={() => router.push("/cart")}
+            className={`btn btn-ghost btn-circle ${!user ? "btn-disabled" : ""}`}
+            onClick={() => user && router.push("/cart")}
             aria-label="Shopping cart"
+            disabled={!user}
           >
             <div className="indicator">
               <ShoppingCart className="h-5 w-5" />
-              {totalCartItems > 0 && (
+              {user && totalCartItems > 0 && (
                 <span className="badge badge-sm indicator-item badge-primary">
                   {totalCartItems > 99 ? "99+" : totalCartItems}
                 </span>

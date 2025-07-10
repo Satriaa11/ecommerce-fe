@@ -1,8 +1,5 @@
 Anda benar! Berdasarkan kode yang saya lihat di repository, konfigurasi DaisyUI menggunakan `@plugin` directive di CSS, bukan di `tailwind.config.js`. Berikut adalah dokumentasi yang sudah diperbaiki:
 
-````markdown
-# File: /c/Users/satria/Documents/Bootcamp-RevoU/ReCreate/ecommerce-ui/README.md
-
 # E-Commerce UI - Modern Shopping Experience
 
 A modern e-commerce application built with Next.js, providing a responsive and user-friendly shopping experience with comprehensive features for product management, shopping cart, and user profiles.
@@ -82,7 +79,6 @@ A modern e-commerce application built with Next.js, providing a responsive and u
   "typescript": "^5"
 }
 ```
-````
 
 ### UI & Styling
 
@@ -425,3 +421,7 @@ Project Link: [https://github.com/satriawirabhakti/ecommerce-ui](https://github.
 ---
 
 **Happy Coding! 🎉**
+
+```
+
+```

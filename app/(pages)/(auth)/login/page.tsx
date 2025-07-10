@@ -5,7 +5,6 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthHeader } from "@/components/features/auth/AuthHeader";
 import { LoginForm } from "@/components/features/auth/LoginForm";
-import { SocialAuth } from "@/components/features/auth/SocialAuth";
 import { useAppStore } from "@/stores/useAppStore";
 
 interface LoginFormData {
@@ -13,7 +12,7 @@ interface LoginFormData {
   password: string;
 }
 
-// Komponen yang menggunakan useSearchParams
+// Component that uses useSearchParams
 function LoginPageContent() {
   const [successMessage, setSuccessMessage] = useState("");
   const { login, isLoading, error, clearError } = useAppStore();
@@ -45,14 +44,14 @@ function LoginPageContent() {
       <div className="max-w-md w-full space-y-8">
         {/* Back Button */}
         <div className="max-w-md mx-auto mb-6">
-          <BackButton />
+          <BackButton text="Back to Home" />
         </div>
 
         <div className="max-w-md mx-auto">
           <AuthHeader
-            title="Masuk ke Akun Anda"
-            subtitle="Belum punya akun?"
-            linkText="Daftar di sini"
+            title="Login to Your Account"
+            subtitle="Don't have an account yet?"
+            linkText="Register here"
             linkHref="/register"
           />
 
@@ -65,10 +64,6 @@ function LoginPageContent() {
                 successMessage={successMessage}
                 onErrorClear={clearError}
               />
-
-              {/* Social Login */}
-              <div className="divider">atau</div>
-              <SocialAuth type="login" />
             </div>
           </div>
         </div>
@@ -83,14 +78,17 @@ function LoginPageLoading() {
     <div className="min-h-screen flex items-center justify-center bg-base-200">
       <div className="max-w-md w-full space-y-8">
         <div className="max-w-md mx-auto mb-6">
-          <BackButton />
+          <BackButton
+            text="Back to Home"
+            onClick={() => window.history.back()}
+          />
         </div>
 
         <div className="max-w-md mx-auto">
           <AuthHeader
-            title="Masuk ke Akun Anda"
-            subtitle="Belum punya akun?"
-            linkText="Daftar di sini"
+            title="Login to Your Account"
+            subtitle="Don't have an account yet?"
+            linkText="Register here"
             linkHref="/register"
           />
 

@@ -11,7 +11,7 @@ interface BackButtonProps {
 }
 
 export const BackButton = ({
-  text = "Kembali",
+  text = "Back",
   onClick,
   className = "btn btn-ghost btn-sm gap-2",
 }: BackButtonProps) => {
@@ -25,13 +25,15 @@ export const BackButton = ({
     }
   };
 
-  //   const handleHome = () => {
-  //     router.push("/");
-  //   };
-
   return (
     <div className="flex gap-2">
-      <button onClick={handleBack} className={className}>
+      <button
+        type="button"
+        onClick={handleBack}
+        className={className}
+        title="back"
+        aria-label="back"
+      >
         <ArrowLeft className="h-4 w-4" />
         {text}
       </button>

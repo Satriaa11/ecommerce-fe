@@ -5,7 +5,7 @@ interface User {
   id: number;
   name: string;
   email: string;
-  avatar?: string; // Tambahkan avatar field
+  avatar?: string;
 }
 
 interface CartProduct {
@@ -39,6 +39,7 @@ interface UserProfile {
 interface AppState {
   user: User | null;
   cart: CartProduct[];
+  userCarts: Record<number, CartProduct[]>; // Tambahkan ini
   accessToken: string | null;
   refreshToken: string | null;
   isLoading: boolean;
@@ -56,12 +57,14 @@ interface AppState {
     name?: string;
     email?: string;
     avatar?: string;
-  }) => Promise<void>; // Tambahkan avatar
+  }) => Promise<void>;
   updatePassword: (passwordData: {
     currentPassword: string;
     password: string;
   }) => Promise<void>;
-  uploadFile: (file: File) => Promise<string>; // Tambahkan uploadFile method
+  uploadFile: (file: File) => Promise<string>;
+  getCartTotal: () => number;
+  getCartItemsCount: () => number;
 }
 
 export const useAppStore = create<AppState>()(
@@ -69,6 +72,7 @@ export const useAppStore = create<AppState>()(
     (set, get) => ({
       user: null,
       cart: [],
+      userCarts: {}, // Tambahkan ini
       accessToken: null,
       refreshToken: null,
       isLoading: false,
@@ -120,11 +124,16 @@ export const useAppStore = create<AppState>()(
             id: profileData.id,
             name: profileData.name,
             email: profileData.email,
-            avatar: profileData.avatar, // Tambahkan avatar dari response
+            avatar: profileData.avatar,
           };
+
+          // Restore cart untuk user ini
+          const { userCarts } = get();
+          const userCart = userCarts[user.id] || [];
 
           set({
             user,
+            cart: userCart, // Restore cart user
             accessToken: loginData.access_token,
             refreshToken: loginData.refresh_token,
             isLoading: false,
@@ -134,7 +143,7 @@ export const useAppStore = create<AppState>()(
           const errorMessage =
             error instanceof Error
               ? error.message
-              : "Terjadi kesalahan saat login";
+              : "Uncaught error during login";
           set({
             user: null,
             accessToken: null,
@@ -147,61 +156,121 @@ export const useAppStore = create<AppState>()(
       },
 
       logout: () => {
+        const { user, cart, userCarts } = get();
+
+        // Simpan cart user sebelum logout
+        if (user) {
+          set({
+            userCarts: {
+              ...userCarts,
+              [user.id]: cart,
+            },
+          });
+        }
+
         set({
           user: null,
+          cart: [], // Kosongkan cart sementara
           accessToken: null,
           refreshToken: null,
           error: null,
         });
-        // Cart TIDAK dikosongkan saat logout
       },
 
       addToCart: (item) => {
-        const { cart } = get();
+        const { cart, user, userCarts } = get();
         const existingItem = cart.find((cartItem) => cartItem.id === item.id);
 
+        let newCart;
         if (existingItem) {
           // Jika produk sudah ada, tambahkan quantity
-          set({
-            cart: cart.map((cartItem) =>
-              cartItem.id === item.id
-                ? {
-                    ...cartItem,
-                    quantity: cartItem.quantity + (item.quantity || 1),
-                  }
-                : cartItem,
-            ),
-          });
+          newCart = cart.map((cartItem) =>
+            cartItem.id === item.id
+              ? {
+                  ...cartItem,
+                  quantity: cartItem.quantity + (item.quantity || 1),
+                }
+              : cartItem,
+          );
         } else {
           // Jika produk belum ada, tambahkan sebagai item baru
-          set({
-            cart: [
-              ...cart,
-              {
-                id: item.id,
-                name: item.name,
-                price: item.price,
-                quantity: item.quantity || 1,
-                image: item.image,
-              },
-            ],
-          });
+          newCart = [
+            ...cart,
+            {
+              id: item.id,
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity || 1,
+              image: item.image,
+              category: item.category,
+              maxStock: item.maxStock,
+            },
+          ];
         }
+
+        // Update cart dan userCarts
+        set({
+          cart: newCart,
+          userCarts: user
+            ? {
+                ...userCarts,
+                [user.id]: newCart,
+              }
+            : userCarts,
+        });
       },
 
       updateCartItemQuantity: (id: number, quantity: number) => {
+        const { cart, user, userCarts } = get();
+
+        let newCart;
         if (quantity <= 0) {
           // Jika quantity 0 atau negatif, hapus item
-          set({
-            cart: get().cart.filter((item) => item.id !== id),
-          });
+          newCart = cart.filter((item) => item.id !== id);
         } else {
-          set({
-            cart: get().cart.map((item) =>
-              item.id === id ? { ...item, quantity } : item,
-            ),
-          });
+          newCart = cart.map((item) =>
+            item.id === id ? { ...item, quantity } : item,
+          );
         }
+
+        set({
+          cart: newCart,
+          userCarts: user
+            ? {
+                ...userCarts,
+                [user.id]: newCart,
+              }
+            : userCarts,
+        });
+      },
+
+      removeFromCart: (productId: number) => {
+        const { cart, user, userCarts } = get();
+        const newCart = cart.filter((item) => item.id !== productId);
+
+        set({
+          cart: newCart,
+          userCarts: user
+            ? {
+                ...userCarts,
+                [user.id]: newCart,
+              }
+            : userCarts,
+        });
+      },
+
+      clearCart: () => {
+        const { user, userCarts } = get();
+
+        set({
+          cart: [],
+          userCarts: user
+            ? {
+                ...userCarts,
+                [user.id]: [],
+              }
+            : userCarts,
+        });
       },
 
       getCartTotal: () => {
@@ -213,17 +282,6 @@ export const useAppStore = create<AppState>()(
 
       getCartItemsCount: () => {
         return get().cart.reduce((total, item) => total + item.quantity, 0);
-      },
-
-      removeFromCart: (productId: number) => {
-        const { cart } = get();
-        set({
-          cart: cart.filter((item) => item.id !== productId),
-        });
-      },
-
-      clearCart: () => {
-        set({ cart: [] });
       },
 
       clearError: () => {
@@ -366,6 +424,7 @@ export const useAppStore = create<AppState>()(
 
           if (!response.ok) {
             if (response.status === 401) {
+              // Token expired atau invalid
               throw new Error("Sesi telah berakhir. Silakan login ulang.");
             }
             const errorData = await response.json().catch(() => ({}));
@@ -374,7 +433,8 @@ export const useAppStore = create<AppState>()(
             );
           }
 
-          // Password berhasil diperbarui
+          // Password berhasil diupdate
+          // Tidak perlu update state karena password tidak disimpan di client
           return;
         } catch (error) {
           console.error("Error updating password:", error);
@@ -383,12 +443,14 @@ export const useAppStore = create<AppState>()(
       },
     }),
     {
-      name: "app-storage",
+      name: "app-store",
+      // Konfigurasi persist untuk menyimpan data ke localStorage
       partialize: (state) => ({
         user: state.user,
-        cart: state.cart,
+        userCarts: state.userCarts, // Simpan userCarts ke localStorage
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
+        // cart tidak disimpan karena akan di-restore dari userCarts
       }),
     },
   ),

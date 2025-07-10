@@ -10,7 +10,7 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: "ShopEase - Ecommerce website",
-  description: "ecommerce website for a fictional outfit brand",
+  description: "ecommerce website for a fictional outfit and accessories",
   icons: {
     icon: "/favicon.ico",
   },
@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="eng">
+    <html lang="en">
       <body className={outfit.className}>
         <Providers>{children}</Providers>
       </body>

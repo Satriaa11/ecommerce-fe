@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { RegisterForm } from "@/components/features/auth/RegisterForm";
-import { SocialAuth } from "@/components/features/auth/SocialAuth";
+// import { SocialAuth } from "@/components/features/auth/SocialAuth";
 import { AuthHeader } from "@/components/features/auth/AuthHeader";
 import { createUser } from "@/utils/api";
+import { BackButton } from "@/components/shared/BackButton";
 
 interface RegisterData {
   name: string;
@@ -36,7 +36,7 @@ export default function RegisterPage() {
 
       // Redirect ke login dengan success message
       router.push(
-        "/login?message=Registrasi berhasil! Silakan login dengan akun baru Anda.",
+        "/login?message=Registration successful! Please log in with your new account.",
       );
     } catch (error) {
       console.error("Registration error:", error);
@@ -44,7 +44,7 @@ export default function RegisterPage() {
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "Terjadi kesalahan saat registrasi. Silakan coba lagi.";
+          : "An error occurred during registration. Please try again.";
 
       setError(errorMessage);
     } finally {
@@ -56,21 +56,12 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-base-200 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Back to Home Button */}
-        <div className="flex justify-start">
-          <button
-            onClick={() => router.push("/")}
-            className="btn btn-ghost btn-sm gap-2"
-            aria-label="Kembali ke beranda"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Kembali ke Beranda
-          </button>
-        </div>
+        <BackButton text="Back to Home" onClick={() => router.push("/")} />
 
         <AuthHeader
-          title="Buat Akun Baru"
-          subtitle="Sudah punya akun?"
-          linkText="Masuk di sini"
+          title="Create an Account"
+          subtitle="Have an account?"
+          linkText="Login here"
           linkHref="/login"
         />
 
@@ -82,9 +73,9 @@ export default function RegisterPage() {
               error={error}
             />
 
-            <div className="divider">atau</div>
+            {/* <div className="divider">atau</div> */}
 
-            <SocialAuth type="register" />
+            {/* <SocialAuth type="register" /> */}
           </div>
         </div>
       </div>

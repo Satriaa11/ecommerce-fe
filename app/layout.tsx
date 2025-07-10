@@ -9,8 +9,11 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "ecommerce website",
+  title: "ShopEase - Ecommerce website",
   description: "ecommerce website for a fictional outfit brand",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

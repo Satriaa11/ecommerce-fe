@@ -31,8 +31,8 @@ export const CategoriesSection = ({
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[...Array(6)].map((_, i) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {[...Array(5)].map((_, i) => (
               <div
                 key={i}
                 className="skeleton h-32 rounded-xl bg-base-300"
@@ -40,8 +40,8 @@ export const CategoriesSection = ({
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {categories.map((category, index) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {categories.slice(0, 5).map((category, index) => (
               <Link
                 key={category.id}
                 href={`/products?category=${category.name.toLowerCase()}`}

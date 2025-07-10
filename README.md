@@ -418,6 +418,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Project Link: [https://github.com/satriawirabhakti/ecommerce-ui](https://github.com/Satriaa11/ecommerce-fe)
 
----
-
 **Happy Coding! 🎉**

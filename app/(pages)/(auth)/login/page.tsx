@@ -1,7 +1,7 @@
 "use client";
 
 import { BackButton } from "@/components/shared/BackButton";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthHeader } from "@/components/features/auth/AuthHeader";
 import { LoginForm } from "@/components/features/auth/LoginForm";
@@ -13,7 +13,8 @@ interface LoginFormData {
   password: string;
 }
 
-export default function LoginPage() {
+// Komponen yang menggunakan useSearchParams
+function LoginPageContent() {
   const [successMessage, setSuccessMessage] = useState("");
   const { login, isLoading, error, clearError } = useAppStore();
 
@@ -73,5 +74,43 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Loading fallback component
+function LoginPageLoading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-base-200">
+      <div className="max-w-md w-full space-y-8">
+        <div className="max-w-md mx-auto mb-6">
+          <BackButton />
+        </div>
+
+        <div className="max-w-md mx-auto">
+          <AuthHeader
+            title="Masuk ke Akun Anda"
+            subtitle="Belum punya akun?"
+            linkText="Daftar di sini"
+            linkHref="/register"
+          />
+
+          <div className="card bg-base-100 shadow-xl">
+            <div className="card-body">
+              <div className="flex items-center justify-center py-8">
+                <span className="loading loading-spinner loading-lg text-primary"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginPageLoading />}>
+      <LoginPageContent />
+    </Suspense>
   );
 }

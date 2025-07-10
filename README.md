@@ -414,14 +414,10 @@ Distributed under the MIT License. See `LICENSE` for more information.
 **Satria Wira Bakti**
 
 - GitHub: [@Satriaa11](https://github.com/Satriaa11)
-- Email: satriawirabhakti@example.com
+- Email: wirabkti@gmail.com
 
 Project Link: [https://github.com/satriawirabhakti/ecommerce-ui](https://github.com/Satriaa11/ecommerce-fe)
 
 ---
 
 **Happy Coding! 🎉**
-
-```
-
-```

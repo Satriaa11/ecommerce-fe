@@ -2,6 +2,7 @@
 
 import { Menu, ShoppingCart, User, Search } from "lucide-react";
 import Link from "next/link";
+import React from 'react';
 import { usePathname, useRouter } from "next/navigation";
 import MaxWidthWrapperNavbar from "@/components/MaxWidthWrapperNavbar";
 import { ThemeToggle } from "../ThemeToggle";

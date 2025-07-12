@@ -120,6 +120,7 @@ export const Header = () => {
         <div className="navbar-end gap-5 hidden lg:flex">
           {/* Search */}
           <button
+            type="button"
             className="btn btn-ghost btn-circle"
             aria-label="Search"
             onClick={() => {
@@ -241,9 +242,21 @@ export const Header = () => {
         {/* Mobile right side - Only theme toggle and search */}
         <div className="navbar-end gap-1 lg:hidden">
           <button
-            className="btn btn-ghost btn-circle"
             type="button"
+            className="btn btn-ghost btn-circle"
             aria-label="Search"
+            onClick={() => {
+              router.push("/products");
+              // Focus ke search bar setelah navigasi
+              setTimeout(() => {
+                const searchInput = document.querySelector(
+                  'input[type="text"]'
+                ) as HTMLInputElement;
+                if (searchInput) {
+                  searchInput.focus();
+                }
+              }, 100);
+            }}
           >
             <Search className="h-5 w-5" />
           </button>

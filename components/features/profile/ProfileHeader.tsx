@@ -1,9 +1,9 @@
 "use client";
 
+import Image from "next/image";
+import { useState, useRef, useEffect } from "react";
 import { User, Camera, CheckCircle, AlertCircle } from "lucide-react";
 import { useAppStore } from "@/stores/useAppStore";
-import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
 
 export const ProfileHeader = () => {
   const { user, updateProfile, uploadFile } = useAppStore();
@@ -15,23 +15,23 @@ export const ProfileHeader = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Format tanggal member since
+  // Format member since date
   const formatMemberSince = (date: string) => {
-    if (!date) return "Baru bergabung";
-    return new Intl.DateTimeFormat("id-ID", {
+    if (!date) return "Recently joined";
+    return new Intl.DateTimeFormat("en-US", {
       year: "numeric",
       month: "long",
     }).format(new Date(date));
   };
 
-  // Handle klik tombol ubah gambar
+  // Handle change photo button click
   const handleChangePhotoClick = () => {
     fileInputRef.current?.click();
   };
 
-  // Handle perubahan file
+  // Handle file change
   const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
@@ -40,21 +40,21 @@ export const ProfileHeader = () => {
     setNotification(null);
 
     try {
-      // 1. Upload file ke API menggunakan store method
+      // 1. Upload file to API using store method
       const newImageUrl = await uploadFile(file);
 
-      // 2. Update profile dengan avatar baru
+      // 2. Update profile with new avatar
       await updateProfile({
         avatar: newImageUrl,
       });
 
-      // 3. Tampilkan notifikasi sukses
+      // 3. Show success notification
       setNotification({
         type: "success",
-        message: "Foto profil berhasil diperbarui",
+        message: "Profile picture updated successfully",
       });
 
-      // Reset input file
+      // Reset file input
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -65,14 +65,14 @@ export const ProfileHeader = () => {
         message:
           error instanceof Error
             ? error.message
-            : "Gagal memperbarui foto profil",
+            : "Failed to update profile picture",
       });
     } finally {
       setIsUploading(false);
     }
   };
 
-  // Clear notification setelah 5 detik
+  // Clear notification after 5 seconds
   useEffect(() => {
     if (notification) {
       const timer = setTimeout(() => {
@@ -114,7 +114,7 @@ export const ProfileHeader = () => {
                     alt={`${user.name} avatar`}
                     className="w-full h-full object-cover rounded-full"
                     onError={(e) => {
-                      // Fallback jika gambar gagal dimuat
+                      // Fallback if image fails to load
                       const target = e.target as HTMLImageElement;
                       target.style.display = "none";
                       target.nextElementSibling?.classList.remove("hidden");
@@ -126,7 +126,7 @@ export const ProfileHeader = () => {
                   </div>
                 )}
 
-                {/* Fallback icon jika gambar error */}
+                {/* Fallback icon if image error */}
                 {user?.avatar && (
                   <div className="w-full h-full bg-base-300 rounded-full items-center justify-center hidden">
                     <User className="w-12 h-12 text-base-content/50" />
@@ -135,7 +135,7 @@ export const ProfileHeader = () => {
               </div>
             </div>
 
-            {/* Upload overlay saat loading */}
+            {/* Upload overlay when loading */}
             {isUploading && (
               <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center">
                 <span className="loading loading-spinner loading-md text-white"></span>
@@ -146,16 +146,16 @@ export const ProfileHeader = () => {
           {/* User Info Section */}
           <div className="flex-1 text-center sm:text-left">
             <h1 className="text-2xl font-bold text-base-content">
-              {user?.name || "Nama Pengguna"}
+              {user?.name || "User Name"}
             </h1>
             <p className="text-base-content/70 mt-1">
               {user?.email || "email@example.com"}
             </p>
             <p className="text-sm text-base-content/50 mt-2">
-              Member sejak {formatMemberSince("2024-01-01")}
+              Member since {formatMemberSince("2024-01-01")}
             </p>
 
-            {/* Ubah Gambar Button */}
+            {/* Change Photo Button */}
             <button
               className="btn btn-outline btn-sm mt-4"
               onClick={handleChangePhotoClick}
@@ -164,19 +164,19 @@ export const ProfileHeader = () => {
               {isUploading ? (
                 <>
                   <span className="loading loading-spinner loading-sm"></span>
-                  Mengunggah...
+                  Uploading...
                 </>
               ) : (
                 <>
                   <Camera className="w-4 h-4" />
-                  Ubah Gambar
+                  Change Photo
                 </>
               )}
             </button>
 
             {/* Hidden file input */}
             <input
-              title="Upload Foto Profil"
+              title="Upload Profile Photo"
               ref={fileInputRef}
               type="file"
               accept="image/*"
@@ -186,14 +186,14 @@ export const ProfileHeader = () => {
           </div>
         </div>
 
-        {/* Stats atau info tambahan */}
+        {/* Stats or additional info */}
         <div className="stats stats-horizontal shadow mt-6">
           <div className="stat">
-            <div className="stat-title">Total Pesanan</div>
+            <div className="stat-title">Total Orders</div>
             <div className="stat-value text-primary">0</div>
           </div>
           <div className="stat">
-            <div className="stat-title">Poin Reward</div>
+            <div className="stat-title">Reward Points</div>
             <div className="stat-value text-secondary">0</div>
           </div>
           <div className="stat">

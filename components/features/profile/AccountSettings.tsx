@@ -40,7 +40,7 @@ export const AccountSettings = () => {
     },
   });
 
-  // Clear notification setelah 5 detik
+  // Clear notification after 5 seconds
   useEffect(() => {
     if (notification) {
       const timer = setTimeout(() => {
@@ -60,10 +60,10 @@ export const AccountSettings = () => {
 
       setNotification({
         type: "success",
-        message: "Password berhasil diperbarui",
+        message: "Password updated successfully",
       });
 
-      // Reset form setelah berhasil
+      // Reset form after success
       reset({
         currentPassword: "",
         newPassword: "",
@@ -76,20 +76,20 @@ export const AccountSettings = () => {
         message:
           error instanceof Error
             ? error.message
-            : "Gagal memperbarui password. Silakan coba lagi.",
+            : "Failed to update password. Please try again.",
       });
     }
   };
 
-  // Jika user belum login, tampilkan pesan
+  // If user is not logged in, show message
   if (!user) {
     return (
       <div className="card bg-base-100 shadow-lg">
         <div className="card-body text-center">
           <AlertCircle className="w-12 h-12 mx-auto text-warning mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Akses Terbatas</h3>
+          <h3 className="text-lg font-semibold mb-2">Limited Access</h3>
           <p className="text-base-content/70">
-            Silakan login terlebih dahulu untuk mengakses pengaturan akun.
+            Please log in first to access account settings.
           </p>
         </div>
       </div>
@@ -119,14 +119,14 @@ export const AccountSettings = () => {
         <div className="card-body">
           <h2 className="card-title mb-4">
             <Shield className="w-5 h-5" />
-            Keamanan Akun
+            Account Security
           </h2>
 
           <form onSubmit={handleSubmit(onSubmitPassword)} className="space-y-4">
-            {/* Password Lama */}
+            {/* Current Password */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Password Lama</span>
+                <span className="label-text">Current Password</span>
               </label>
               <div className="relative">
                 <input
@@ -134,7 +134,7 @@ export const AccountSettings = () => {
                   className={`input input-bordered w-full pr-10 ${
                     errors.currentPassword ? "input-error" : ""
                   }`}
-                  placeholder="Masukkan password lama"
+                  placeholder="Enter current password"
                   {...register("currentPassword")}
                 />
                 <button
@@ -142,9 +142,7 @@ export const AccountSettings = () => {
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 hover:text-primary transition-colors"
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   aria-label={
-                    showCurrentPassword
-                      ? "Sembunyikan password"
-                      : "Tampilkan password"
+                    showCurrentPassword ? "Hide password" : "Show password"
                   }
                 >
                   {showCurrentPassword ? (
@@ -163,10 +161,10 @@ export const AccountSettings = () => {
               )}
             </div>
 
-            {/* Password Baru */}
+            {/* New Password */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Password Baru</span>
+                <span className="label-text">New Password</span>
               </label>
               <div className="relative">
                 <input
@@ -174,16 +172,14 @@ export const AccountSettings = () => {
                   className={`input input-bordered w-full pr-10 ${
                     errors.newPassword ? "input-error" : ""
                   }`}
-                  placeholder="Masukkan password baru"
+                  placeholder="Enter new password"
                   {...register("newPassword")}
                 />
                 <button
                   type="button"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 hover:text-primary transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
-                  aria-label={
-                    showPassword ? "Sembunyikan password" : "Tampilkan password"
-                  }
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5 text-base-content/50" />
@@ -201,10 +197,10 @@ export const AccountSettings = () => {
               )}
             </div>
 
-            {/* Konfirmasi Password */}
+            {/* Confirm Password */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Konfirmasi Password</span>
+                <span className="label-text">Confirm Password</span>
               </label>
               <div className="relative">
                 <input
@@ -212,7 +208,7 @@ export const AccountSettings = () => {
                   className={`input input-bordered w-full pr-10 ${
                     errors.confirmPassword ? "input-error" : ""
                   }`}
-                  placeholder="Konfirmasi password baru"
+                  placeholder="Confirm new password"
                   {...register("confirmPassword")}
                 />
                 <button
@@ -221,8 +217,8 @@ export const AccountSettings = () => {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   aria-label={
                     showConfirmPassword
-                      ? "Sembunyikan konfirmasi password"
-                      : "Tampilkan konfirmasi password"
+                      ? "Hide confirm password"
+                      : "Show confirm password"
                   }
                 >
                   {showConfirmPassword ? (
@@ -251,12 +247,12 @@ export const AccountSettings = () => {
                 {isSubmitting ? (
                   <>
                     <span className="loading loading-spinner loading-sm"></span>
-                    Memperbarui Password...
+                    Updating Password...
                   </>
                 ) : (
                   <>
                     <Lock className="w-4 h-4 mr-2" />
-                    Perbarui Password
+                    Update Password
                   </>
                 )}
               </button>
@@ -265,12 +261,12 @@ export const AccountSettings = () => {
 
           {/* Password Requirements Info */}
           <div className="mt-6 p-4 bg-base-200 rounded-lg">
-            <h4 className="font-medium text-sm mb-2">Persyaratan Password:</h4>
+            <h4 className="font-medium text-sm mb-2">Password Requirements:</h4>
             <ul className="text-xs text-base-content/70 space-y-1">
-              <li>• Minimal 8 karakter</li>
-              <li>• Mengandung huruf besar (A-Z)</li>
-              <li>• Mengandung huruf kecil (a-z)</li>
-              <li>• Mengandung angka (0-9)</li>
+              <li>• Minimum 8 characters</li>
+              <li>• Contains uppercase letters (A-Z)</li>
+              <li>• Contains lowercase letters (a-z)</li>
+              <li>• Contains numbers (0-9)</li>
             </ul>
           </div>
         </div>
@@ -279,13 +275,13 @@ export const AccountSettings = () => {
       {/* Theme Settings */}
       <div className="card bg-base-100 shadow-lg">
         <div className="card-body">
-          <h2 className="card-title mb-4">Pengaturan Tema</h2>
+          <h2 className="card-title mb-4">Theme Settings</h2>
 
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-medium">Mode Gelap</h3>
+              <h3 className="font-medium">Dark Mode</h3>
               <p className="text-sm text-base-content/70">
-                Ubah tampilan aplikasi ke mode gelap atau terang
+                Switch between light and dark theme
               </p>
             </div>
             <ThemeToggle />
@@ -296,11 +292,11 @@ export const AccountSettings = () => {
       {/* Account Information */}
       <div className="card bg-base-100 shadow-lg">
         <div className="card-body">
-          <h2 className="card-title mb-4">Informasi Akun</h2>
+          <h2 className="card-title mb-4">Account Information</h2>
 
           <div className="space-y-3">
             <div className="flex justify-between items-center py-2 border-b border-base-200">
-              <span className="text-sm font-medium">Nama:</span>
+              <span className="text-sm font-medium">Name:</span>
               <span className="text-sm">{user.name}</span>
             </div>
 
@@ -310,7 +306,7 @@ export const AccountSettings = () => {
             </div>
 
             <div className="flex justify-between items-center py-2">
-              <span className="text-sm font-medium">ID Pengguna:</span>
+              <span className="text-sm font-medium">User ID:</span>
               <span className="text-sm text-base-content/70">#{user.id}</span>
             </div>
           </div>

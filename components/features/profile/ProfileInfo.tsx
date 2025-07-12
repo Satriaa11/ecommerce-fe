@@ -7,10 +7,10 @@ import { z } from "zod";
 import { Edit2, Save, X, AlertCircle, CheckCircle } from "lucide-react";
 import { useAppStore } from "@/stores/useAppStore";
 
-// Schema validasi Zod
+// Zod validation schema
 const profileSchema = z.object({
-  name: z.string().min(1, "Nama wajib diisi"),
-  email: z.string().email("Format email tidak valid"),
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email format"),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -43,7 +43,7 @@ export const ProfileInfo = () => {
 
   const watchedEmail = watch("email");
 
-  // Reset form ketika user data berubah
+  // Reset form when user data changes
   useEffect(() => {
     if (user) {
       reset({
@@ -53,7 +53,7 @@ export const ProfileInfo = () => {
     }
   }, [user, reset]);
 
-  // Clear notification setelah 5 detik
+  // Clear notification after 5 seconds
   useEffect(() => {
     if (notification) {
       const timer = setTimeout(() => {
@@ -63,7 +63,7 @@ export const ProfileInfo = () => {
     }
   }, [notification]);
 
-  // Fungsi untuk cek ketersediaan email
+  // Function to check email availability
   const checkEmailAvailability = async (email: string) => {
     if (!email || email === user?.email) {
       setEmailAvailable(null);
@@ -80,17 +80,17 @@ export const ProfileInfo = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ email }),
-        },
+        }
       );
 
       const data = await response.json();
 
       if (response.ok) {
-        setEmailAvailable(data.isAvailable || true); // Asumsi API mengembalikan isAvailable
+        setEmailAvailable(data.isAvailable || true); // Assume API returns isAvailable
         if (!data.isAvailable) {
           setError("email", {
             type: "manual",
-            message: "Email sudah digunakan",
+            message: "Email is already taken",
           });
         } else {
           clearErrors("email");
@@ -99,7 +99,7 @@ export const ProfileInfo = () => {
     } catch (error) {
       console.error("Error checking email availability:", error);
       setEmailAvailable(null);
-      // Jika API tidak tersedia, anggap email tersedia
+      // If API is not available, assume email is available
       setEmailAvailable(true);
     } finally {
       setIsCheckingEmail(false);
@@ -116,7 +116,7 @@ export const ProfileInfo = () => {
   // Handle form submit
   const onSubmit = async (data: ProfileFormData) => {
     try {
-      // Hanya kirim data yang berubah
+      // Only send changed data
       const updatedData: Partial<ProfileFormData> = {};
 
       if (data.name !== user?.name) {
@@ -127,22 +127,22 @@ export const ProfileInfo = () => {
         updatedData.email = data.email;
       }
 
-      // Jika tidak ada perubahan
+      // If no changes
       if (Object.keys(updatedData).length === 0) {
         setNotification({
           type: "error",
-          message: "Tidak ada perubahan yang disimpan",
+          message: "No changes to save",
         });
         setIsEditing(false);
         return;
       }
 
-      // Panggil updateProfile dari store
+      // Call updateProfile from store
       await updateProfile(updatedData);
 
       setNotification({
         type: "success",
-        message: "Profil berhasil diperbarui",
+        message: "Profile updated successfully",
       });
       setIsEditing(false);
       setEmailAvailable(null);
@@ -150,7 +150,7 @@ export const ProfileInfo = () => {
       console.error("Error updating profile:", error);
       setNotification({
         type: "error",
-        message: "Gagal memperbarui profil. Silakan coba lagi.",
+        message: "Failed to update profile. Please try again.",
       });
     }
   };
@@ -185,7 +185,7 @@ export const ProfileInfo = () => {
         )}
 
         <div className="flex justify-between items-center mb-6">
-          <h2 className="card-title">Informasi Personal</h2>
+          <h2 className="card-title">Personal Information</h2>
           {!isEditing ? (
             <button
               className="btn btn-outline btn-sm"
@@ -207,12 +207,12 @@ export const ProfileInfo = () => {
                 {isSubmitting ? (
                   <>
                     <span className="loading loading-spinner loading-sm"></span>
-                    Menyimpan...
+                    Saving...
                   </>
                 ) : (
                   <>
                     <Save className="w-4 h-4" />
-                    Simpan
+                    Save
                   </>
                 )}
               </button>
@@ -222,7 +222,7 @@ export const ProfileInfo = () => {
                 disabled={isSubmitting}
               >
                 <X className="w-4 h-4" />
-                Batal
+                Cancel
               </button>
             </div>
           )}
@@ -234,7 +234,7 @@ export const ProfileInfo = () => {
             <div className="form-control">
               <div className="flex items-center gap-4">
                 <label className="label w-32 flex-shrink-0">
-                  <span className="label-text">Nama Lengkap</span>
+                  <span className="label-text">Full Name</span>
                 </label>
                 {isEditing ? (
                   <div className="flex-1">
@@ -243,7 +243,7 @@ export const ProfileInfo = () => {
                       className={`input input-bordered w-full ${
                         errors.name ? "input-error" : ""
                       }`}
-                      placeholder="Masukkan nama lengkap"
+                      placeholder="Enter your full name"
                       {...register("name")}
                     />
                     {errors.name && (
@@ -276,7 +276,7 @@ export const ProfileInfo = () => {
                         className={`input input-bordered w-full pr-10 ${
                           errors.email ? "input-error" : ""
                         } ${emailAvailable === true ? "input-success" : ""}`}
-                        placeholder="Masukkan alamat email"
+                        placeholder="Enter your email address"
                         {...register("email")}
                         onBlur={handleEmailBlur}
                       />
@@ -302,7 +302,7 @@ export const ProfileInfo = () => {
                       watchedEmail !== user?.email && (
                         <label className="label">
                           <span className="label-text-alt text-success">
-                            Email tersedia
+                            Email is available
                           </span>
                         </label>
                       )}

@@ -52,7 +52,9 @@ export const Header = () => {
                 <li key={index}>
                   <Link
                     href={item.href}
-                    className={`rounded-lg ${pathname === item.href ? "active" : ""}`}
+                    className={`rounded-lg ${
+                      pathname === item.href ? "active" : ""
+                    }`}
                   >
                     {item.name}
                   </Link>
@@ -75,6 +77,7 @@ export const Header = () => {
                   </Link>
                 ) : (
                   <button
+                    type="button"
                     onClick={() => router.push("/login")}
                     className="rounded-lg"
                   >
@@ -102,7 +105,9 @@ export const Header = () => {
               <li key={index}>
                 <Link
                   href={item.href}
-                  className={`rounded-lg ${pathname === item.href ? "active" : ""}`}
+                  className={`rounded-lg ${
+                    pathname === item.href ? "active" : ""
+                  }`}
                 >
                   {item.name}
                 </Link>
@@ -122,7 +127,7 @@ export const Header = () => {
               // Focus ke search bar setelah navigasi
               setTimeout(() => {
                 const searchInput = document.querySelector(
-                  'input[type="text"]',
+                  'input[type="text"]'
                 ) as HTMLInputElement;
                 if (searchInput) {
                   searchInput.focus();
@@ -135,7 +140,10 @@ export const Header = () => {
 
           {/* Cart */}
           <button
-            className={`btn btn-ghost btn-circle ${!user ? "btn-disabled" : ""}`}
+            type="button"
+            className={`btn btn-ghost btn-circle ${
+              !user ? "btn-disabled" : ""
+            }`}
             onClick={() => user && router.push("/cart")}
             aria-label="Shopping cart"
             disabled={!user}
@@ -219,6 +227,8 @@ export const Header = () => {
             </div>
           ) : (
             <button
+              title="Login"
+              type="button"
               onClick={() => router.push("/login")}
               className="btn btn-ghost btn-circle"
               aria-label="Login"
@@ -230,7 +240,11 @@ export const Header = () => {
 
         {/* Mobile right side - Only theme toggle and search */}
         <div className="navbar-end gap-1 lg:hidden">
-          <button className="btn btn-ghost btn-circle" aria-label="Search">
+          <button
+            className="btn btn-ghost btn-circle"
+            type="button"
+            aria-label="Search"
+          >
             <Search className="h-5 w-5" />
           </button>
           <ThemeToggle />

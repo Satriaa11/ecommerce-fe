@@ -19,7 +19,10 @@ export const NewsletterSection = () => {
               placeholder="Enter your email address"
               className="input input-bordered flex-1 bg-white text-base-content"
             />
-            <button className="btn btn-accent text-white border-none hover:bg-accent/90">
+            <button
+              type="submit"
+              className="btn btn-accent text-white border-none hover:bg-accent/90"
+            >
               Subscribe
               <Gift className="w-4 h-4" />
             </button>
